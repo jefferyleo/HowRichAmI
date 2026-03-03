@@ -2,7 +2,7 @@
 
 A single-page web app that shows where your income sits on the global wealth spectrum, adjusted for purchasing power and household size.
 
-Live demo: *(deploy and add URL here)*
+Live demo: *https://jefferyleo.github.io/HowRichAmI/*
 
 ---
 
