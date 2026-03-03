@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:pip.worldbank.org)",
+      "WebSearch",
+      "WebFetch(domain:blogs.worldbank.org)",
+      "WebFetch(domain:worldbank.github.io)"
+    ]
+  }
+}

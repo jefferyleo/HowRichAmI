@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Wealth Calculator</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Language Switcher -->
+  <div class="lang-switcher">
+    <div class="select-wrap">
+      <select id="langSelect" aria-label="Select language">
+        <option value="en">🇬🇧 English</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="zh">🇨🇳 中文</option>
+        <option value="ms">🇲🇾 Bahasa Melayu</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Hero Header -->
+  <header>
+    <span class="eyebrow" data-i18n="eyebrow">Free Tool · No Sign-up</span>
+    <h1>
+      <span data-i18n="headline_1">How Rich Am I,</span><br />
+      <span data-i18n="headline_2">Really?</span>
+    </h1>
+    <p data-i18n="subheadline">See where your income sits on the global wealth spectrum — adjusted for purchasing power and household size.</p>
+  </header>
+
+  <!-- Card -->
+  <div class="card">
+    <form id="wealthForm" novalidate>
+      <div class="form-grid">
+
+        <!-- Annual Income -->
+        <div class="field full">
+          <label for="income" data-i18n="label_income">Annual Income</label>
+          <div class="input-prefix">
+            <span class="prefix" id="currencySymbol">$</span>
+            <input
+              type="number"
+              id="income"
+              name="income"
+              data-i18n-placeholder="placeholder_income"
+              placeholder="e.g. 60,000"
+              min="0"
+              step="any"
+              inputmode="numeric"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Currency -->
+        <div class="field">
+          <label for="currency" data-i18n="label_currency">Currency</label>
+          <div class="select-wrap">
+            <select id="currency" name="currency">
+              <option value="USD">USD – US Dollar</option>
+              <option value="MYR">MYR – Malaysian Ringgit</option>
+              <option value="GBP">GBP – British Pound</option>
+              <option value="EUR">EUR – Euro</option>
+              <option value="SGD">SGD – Singapore Dollar</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div class="field">
+          <label for="country" data-i18n="label_country">Country</label>
+          <div class="select-wrap">
+            <select id="country" name="country">
+              <option value="US">United States</option>
+              <option value="MY">Malaysia</option>
+              <option value="GB">United Kingdom</option>
+              <option value="EU">Eurozone</option>
+              <option value="SG">Singapore</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Adults -->
+        <div class="field">
+          <label data-i18n="label_adults">Adults in Household</label>
+          <div class="stepper" role="group">
+            <button type="button" data-target="adults" data-delta="-1">−</button>
+            <input type="number" id="adults" name="adults" value="1" min="1" max="20" readonly />
+            <button type="button" data-target="adults" data-delta="1">+</button>
+          </div>
+        </div>
+
+        <!-- Children -->
+        <div class="field">
+          <label data-i18n="label_children">Children in Household</label>
+          <div class="stepper" role="group">
+            <button type="button" data-target="children" data-delta="-1">−</button>
+            <input type="number" id="children" name="children" value="0" min="0" max="20" readonly />
+            <button type="button" data-target="children" data-delta="1">+</button>
+          </div>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <p class="error-msg" id="errorMsg" aria-live="polite"></p>
+
+      <div class="divider"></div>
+
+      <button type="submit" class="btn-calculate" data-i18n="btn_calculate">
+        Calculate My Global Rank →
+      </button>
+    </form>
+
+    <!-- Result Panel -->
+    <div id="result" role="region" aria-live="polite">
+
+      <div class="result-headline">
+        <div class="label" data-i18n="result_label">Your global income ranking</div>
+        <div class="rank">
+          <span data-i18n="result_rank_before">You are richer than </span><span id="percentileVal">—</span><span data-i18n="result_rank_after">% of the world</span>
+        </div>
+        <div class="sub" id="topText"></div>
+      </div>
+
+      <div class="gauge-wrap" aria-hidden="true">
+        <div class="gauge-labels">
+          <span data-i18n="gauge_poorest">Poorest</span>
+          <span data-i18n="gauge_avg">World Average</span>
+          <span data-i18n="gauge_richest">Richest</span>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill" id="gaugeFill"></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="val" id="statEquiv">—</div>
+          <div class="key" data-i18n="stat_equiv">Equiv. Income</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" id="statIntl">—</div>
+          <div class="key" data-i18n="stat_intl">Intl. Dollars / yr</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" id="statDaily">—</div>
+          <div class="key" data-i18n="stat_daily">Intl. $ / day</div>
+        </div>
+      </div>
+
+      <div class="context-note" id="contextNote"></div>
+
+    </div><!-- /result -->
+  </div><!-- /card -->
+
+  <!-- International Dollar explanation -->
+  <details class="how-card intl-card">
+    <summary>
+      <span class="how-toggle-icon">▸</span>
+      <span data-i18n="intl_title">What is an International Dollar (I$)?</span>
+    </summary>
+
+    <div class="how-body">
+
+      <p class="intl-intro" data-i18n="intl_intro">A hypothetical unit of currency that removes price-level differences between countries, so we can compare real living standards on a level playing field.</p>
+
+      <!-- Section 1 -->
+      <div class="how-step">
+        <div class="how-step-header">
+          <strong data-i18n="intl_s1_title">A fixed yardstick — the 2017 PPP baseline</strong>
+        </div>
+        <p data-i18n="intl_s1_body">One International Dollar (I$) has the same purchasing power as $1 USD had in the United States in 2017. Because prices differ by country and drift over time, anchoring to a fixed reference year makes global income comparisons meaningful and consistent.</p>
+      </div>
+
+      <!-- Section 2 + PPP Table -->
+      <div class="how-step">
+        <div class="how-step-header">
+          <strong data-i18n="intl_s2_title">Why not just use today's US Dollar?</strong>
+        </div>
+        <p data-i18n="intl_s2_body">US inflation since 2017 means $1 today buys less than $1 in 2017. Our 2026 USD rate of 1.22 reflects this — you need $1.22 today to match the same basket of goods. Every currency gets its own rate, so local price levels are fully accounted for.</p>
+
+        <div class="how-table-wrap">
+          <table class="how-table">
+            <thead>
+              <tr>
+                <th data-i18n="intl_col_currency">Currency</th>
+                <th data-i18n="intl_col_ppp">PPP rate (2026 est.)</th>
+                <th data-i18n="intl_col_buys">1 I$ ≈ local equivalent</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>USD – US Dollar</td><td>1.22</td><td>$1.22</td></tr>
+              <tr><td>MYR – Malaysian Ringgit</td><td>1.76</td><td>RM 1.76</td></tr>
+              <tr><td>GBP – British Pound</td><td>0.92</td><td>£0.92</td></tr>
+              <tr><td>EUR – Euro</td><td>0.89</td><td>€0.89</td></tr>
+              <tr><td>SGD – Singapore Dollar</td><td>1.26</td><td>S$1.26</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="how-note" data-i18n="intl_note">Rates below 1 (GBP, EUR) mean the currency is strong — £0.92 buys as much locally as $1 bought in the US in 2017. Rates above 1 (USD, MYR, SGD) mean you need more local currency to match that same purchasing power.</p>
+      </div>
+
+    </div>
+  </details>
+
+  <!-- How it works -->
+  <details class="how-card" id="howItWorks">
+    <summary>
+      <span class="how-toggle-icon">▸</span>
+      <span data-i18n="how_title">How is this calculated?</span>
+    </summary>
+
+    <div class="how-body">
+
+      <!-- Step 1 -->
+      <div class="how-step">
+        <div class="how-step-header">
+          <span class="how-step-num">1</span>
+          <strong data-i18n="how_s1_title">Step 1 · Household Adjustment</strong>
+        </div>
+        <p data-i18n="how_s1_body">Your income is divided by the square root of household size.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="how-step">
+        <div class="how-step-header">
+          <span class="how-step-num">2</span>
+          <strong data-i18n="how_s2_title">Step 2 · PPP Conversion — not the Forex rate</strong>
+        </div>
+        <p data-i18n="how_s2_body">We use PPP to convert your income to International Dollars.</p>
+
+        <div class="how-table-wrap">
+          <table class="how-table">
+            <thead>
+              <tr>
+                <th data-i18n="how_s2_col_method">Method</th>
+                <th data-i18n="how_s2_col_rate">Rate</th>
+                <th data-i18n="how_s2_col_result">RM 130,200 converts to</th>
+                <th data-i18n="how_s2_col_rank">Global rank</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-highlight">
+                <td data-i18n="how_s2_ppp">PPP (this tool)</td>
+                <td>0.89 EUR / I$</td>
+                <td>$67,100 I$/yr</td>
+                <td>Top 0.5%</td>
+              </tr>
+              <tr>
+                <td data-i18n="how_s2_forex">Forex rate</td>
+                <td>0.93 EUR / USD</td>
+                <td>$64,500 USD/yr</td>
+                <td>~Top 0.7%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="how-note" data-i18n="how_s2_note">PPP is lower because Malaysia's cost of living is ~40% of the US.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="how-step">
+        <div class="how-step-header">
+          <span class="how-step-num">3</span>
+          <strong data-i18n="how_s3_title">Step 3 · Global Percentile Lookup</strong>
+        </div>
+        <p data-i18n="how_s3_body">Your International Dollar income is matched against 99 real income thresholds from World Bank PIP 2024.</p>
+      </div>
+
+    </div>
+  </details>
+
+  <footer>
+    <span data-i18n="footer_method">Methodology: Square Root equivalization scale · PPP conversion · Log-normal CDF ranking.</span><br />
+    <span data-i18n="footer_source">Data approximated from World Bank &amp; ICP benchmarks.</span>
+    &nbsp;<a href="#" onclick="return false;" data-i18n="footer_learn">Learn more</a>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
